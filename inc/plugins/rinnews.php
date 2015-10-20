@@ -26,7 +26,7 @@ if(!defined("PLUGINLIBRARY"))
 	define("PLUGINLIBRARY", MYBB_ROOT."inc/plugins/pluginlibrary.php");
 }
 
-define('RNS_PLUGIN_VER', '0.2.0');
+define('RNS_PLUGIN_VER', '0.2.1');
 
 function rinnews_info()
 {
@@ -311,6 +311,7 @@ function rinnews_activate()
 	rns_sett_lang = '{\$lang->rinnews_settings}',
 	rns_loldnews_lang = '{\$lang->rinnews_old_news}',
 	rns_lnewnews_lang = '{\$lang->rinnews_new_news}',
+	rns_jgrowl_lang = '{\$lang->rinnews_jgrowl}',
 	rns_lmyalertsnews_lang = '{\$lang->rinnews_myalerts_news}',
 	rns_lnewpost_lang = '{\$lang->rinnews_load_newpost}',
 	rns_idign_lang = '{\$lang->rinnews_tidign_newpost}',

@@ -31,6 +31,7 @@ $l['rinnews_hide'] = 'Hide';
 $l['rinnews_settings'] = 'News Settings';
 $l['rinnews_old_news'] = 'Load old News?';
 $l['rinnews_new_news'] = 'Load new News?';
+$l['rinnews_jgrowl'] = 'Active jGrowl notification?';
 $l['rinnews_myalerts_news'] = 'Load Myalerts News?';
 $l['rinnews_load_newpost'] = 'Load new post';
 $l['rinnews_tidign_newpost'] = 'Set thread id to ignore.<br /><small>Separate id with comma.</small>';

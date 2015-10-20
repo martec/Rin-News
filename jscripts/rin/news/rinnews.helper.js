@@ -290,7 +290,7 @@ var parserTags = {
  * @requires jQuery, Firebase, Mybb
  * @credits sound file by http://community.mybb.com/user-70405.html
  */
- 
+
 function rinnews_connect() {
 	$.ajax({
 		type: 'POST',
@@ -361,10 +361,11 @@ function rinnews(authData) {
 	rn_set_new = '1',
 	rn_set_mya = '1',
 	rn_set_post = '1',
+	rn_set_jgrowl = '1',
 	rn_set_id = '',
 	rn_set_ls = JSON.parse(localStorage.getItem('rn_set')),
 	newnews = new Firebase(''+authData.url+'/newnews'),
-	newmyalert = new Firebase(''+authData.url+'/newmyalert'); 
+	newmyalert = new Firebase(''+authData.url+'/newmyalert');
 
 	if (rns_zone_crrect=='1') {
 		rns_zone++;
@@ -373,6 +374,7 @@ function rinnews(authData) {
 	if (rn_set_ls) {
 		rn_set_old = rn_set_ls['old'];
 		rn_set_new = rn_set_ls['new'];
+		rn_set_jgrowl = rn_set_ls['jgrowl'];
 		if (rn_set_ls['mya']!=undefined) {
 			rn_set_mya = rn_set_ls['mya'];
 		}
@@ -394,10 +396,11 @@ function rinnews(authData) {
 		if(parseInt(rns_newpost)) {
 			rns_npost_sett = '<tr><td class="trow1" width="40%"><strong>'+rns_lnewpost_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_new_lpost"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_idign_lang+'</strong></td><td class="trow1" width="60%"><input type="text" name="tid_ig_inp" id="tid_ig_inp" autocomplete="off"></td></tr>';
 		}
-		$('body').append( '<div id="rns_conf"><table border="0" cellspacing="0" cellpadding="5" class="tborder"><tr><td class="thead" colspan="2"><strong>'+rns_sett_lang+'</strong></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_loldnews_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_old_lnews"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_lnewnews_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_new_lnews"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr>'+rns_myal_sett+rns_npost_sett+'</table><br /><div align="center"><button id="rns_update">'+rns_updset_lang+'</button></div><br /></div>' );
+		$('body').append( '<div id="rns_conf"><table border="0" cellspacing="0" cellpadding="5" class="tborder"><tr><td class="thead" colspan="2"><strong>'+rns_sett_lang+'</strong></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_loldnews_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_old_lnews"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_lnewnews_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_new_lnews"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr><tr><td class="trow1" width="40%"><strong>'+rns_jgrowl_lang+'</strong></td><td class="trow1" width="60%"><select id="rns_jgrowl"><option value="1">'+rns_yes_lan+'</option><option value="0">'+rns_no_lan+'</option></select></td></tr>'+rns_myal_sett+rns_npost_sett+'</table><br /><div align="center"><button id="rns_update">'+rns_updset_lang+'</button></div><br /></div>' );
 		if (rn_set_ls) {
 			$("#rns_old_lnews").find("option[value=" + rn_set_old +"]").attr('selected', true);
 			$("#rns_new_lnews").find("option[value=" + rn_set_new +"]").attr('selected', true);
+			$("#rns_jgrowl").find("option[value=" + rn_set_jgrowl +"]").attr('selected', true);
 			if (rn_set_ls['mya']!=undefined) {
 				$("#rns_new_lmyal").find("option[value=" + rn_set_mya +"]").attr('selected', true);
 			}
@@ -409,7 +412,7 @@ function rinnews(authData) {
 			}
 		}
 		$('#rns_conf').modal({ zIndex: 7 });
-	});	
+	});
 
 	($.fn.on || $.fn.live).call($(document), 'click', '#rns_update', function (e) {
 		e.preventDefault();
@@ -419,6 +422,7 @@ function rinnews(authData) {
 		}
 		rn_set_ls['old'] = $("#rns_old_lnews option:selected").val();
 		rn_set_ls['new'] = $("#rns_new_lnews option:selected").val();
+		rn_set_ls['jgrowl'] = $("#rns_jgrowl option:selected").val();
 		if($('#rns_new_lmyal').length) {
 			rn_set_ls['mya'] = $("#rns_new_lmyal option:selected").val();
 		}
@@ -437,6 +441,7 @@ function rinnews(authData) {
 		if (rn_set_ls) {
 			rn_set_old = rn_set_ls['old'];
 			rn_set_new = rn_set_ls['new'];
+			rn_set_jgrowl = rn_set_ls['jgrowl'];
 			if (rn_set_ls['mya']!=undefined) {
 				rn_set_mya = rn_set_ls['mya'];
 			}
@@ -499,6 +504,19 @@ function rinnews(authData) {
 			if(snapshot.val()) {
 				data = snapshot.val();
 				if (parseInt(data.uid)!=parseInt(authData.uid) && $.inArray(parseInt(data.tid), rn_set_id.split(',').map(function(idignore){return Number(idignore);}))==-1) {
+					if (parseInt(rn_set_jgrowl)) {
+						rnewslang = '';
+						if(data.type=="newpost") {
+							rnewslang = rns_newpost_lang;
+						}
+						else {
+							rnewslang = rns_newthread_lang;
+						}
+						if(!$('#jgrowl_not').length) {
+							$('<div/>', { id: 'jgrowl_not', class: 'bottom-left' }).appendTo('body');
+						}
+						$('#jgrowl_not').jGrowl(""+rnewslang+": "+data.nick+" "+regexrinnews(data.msg)+"", { life: 1000 });
+					}
 					newsgenerator(data.msg, data.nick, data.avatar, data.url, data.created, data.type, 'new');
 					newscont++;
 					$(".rnewscount").text(newscont).show();
@@ -538,10 +556,16 @@ function rinnews(authData) {
 			for (var val in rns_types) {
 				type = type.replace(val, rns_types[val]);
 			}
+			if (parseInt(rn_set_jgrowl)) {
+				if(!$('#jgrowl_not').length) {
+					$('<div/>', { id: 'jgrowl_not', class: 'bottom-left' }).appendTo('body');
+				}
+				$('#jgrowl_not').jGrowl(""+rns_new_myalerts_lang+": "+rns_new_myalertsmsg_lang+" ("+type+")", { life: 1000 });
+			}
 			newsmyalertsgenerator(data.created, type);
 			newscont++;
 			$(".rnewscount").text(newscont).show();
-			document.title = '['+newscont+'] '+rns_orgtit+'';			
+			document.title = '['+newscont+'] '+rns_orgtit+'';
 		});
 	}
 }
