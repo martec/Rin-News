@@ -26,7 +26,7 @@ if(!defined("PLUGINLIBRARY"))
 	define("PLUGINLIBRARY", MYBB_ROOT."inc/plugins/pluginlibrary.php");
 }
 
-define('RNS_PLUGIN_VER', '0.2.1');
+define('RNS_PLUGIN_VER', '0.3.0');
 
 function rinnews_info()
 {
@@ -120,12 +120,48 @@ function rinnews_install()
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
-		'name' => 'rinnews_server',
-		'title' => $lang->rinnews_server_title,
-		'description' => $lang->rinnews_server_desc,
+		'name' => 'rinnews_apiKey',
+		'title' => $lang->rinnews_apikey_title,
+		'description' => $lang->rinnews_apikey_desc,
 		'optionscode' => 'text',
 		'value' => '',
 		'disporder' => 5,
+		'gid'		=> $groupid
+	);
+	$rinnews_setting[] = array(
+		'name' => 'rinnews_authDomain',
+		'title' => $lang->rinnews_authdomain_title,
+		'description' => $lang->rinnews_authdomain_desc,
+		'optionscode' => 'text',
+		'value' => '',
+		'disporder' => 6,
+		'gid'		=> $groupid
+	);
+	$rinnews_setting[] = array(
+		'name' => 'rinnews_databaseURL',
+		'title' => $lang->rinnews_databaseurl_title,
+		'description' => $lang->rinnews_databaseurl_desc,
+		'optionscode' => 'text',
+		'value' => '',
+		'disporder' => 7,
+		'gid'		=> $groupid
+	);
+	$rinnews_setting[] = array(
+		'name' => 'rinnews_client_email',
+		'title' => $lang->rinnews_clientemail_title,
+		'description' => $lang->rinnews_clientemail_desc,
+		'optionscode' => 'text',
+		'value' => '',
+		'disporder' => 8,
+		'gid'		=> $groupid
+	);
+	$rinnews_setting[] = array(
+		'name' => 'rinnews_private_key',
+		'title' => $lang->rinnews_privatekey_title,
+		'description' => $lang->rinnews_privatekey_desc,
+		'optionscode' => 'textarea',
+		'value' => '',
+		'disporder' => 9,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -134,7 +170,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_fsecret_desc,
 		'optionscode' => 'text',
 		'value' => '',
-		'disporder' => 6,
+		'disporder' => 10,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -143,7 +179,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_newpost_desc,
 		'optionscode' => 'yesno',
 		'value' => 1,
-		'disporder' => 7,
+		'disporder' => 11,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -152,7 +188,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_newthread_desc,
 		'optionscode' => 'yesno',
 		'value' => 1,
-		'disporder' => 8,
+		'disporder' => 12,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -161,7 +197,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_foldacc_desc,
 		'optionscode' => 'forumselect',
 		'value' => '',
-		'disporder' => 9,
+		'disporder' => 13,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -170,7 +206,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_dataf_desc,
 		'optionscode' => 'text',
 		'value' => 'DD/MM hh:mm A',
-		'disporder' => 10,
+		'disporder' => 14,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -179,7 +215,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_newpostcolor_desc,
 		'optionscode' => 'text',
 		'value' => 'green',
-		'disporder' => 11,
+		'disporder' => 15,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -188,7 +224,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_newthreadcolor_desc,
 		'optionscode' => 'text',
 		'value' => 'blue',
-		'disporder' => 12,
+		'disporder' => 16,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -197,7 +233,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_myalertscolor_desc,
 		'optionscode' => 'text',
 		'value' => 'orange',
-		'disporder' => 13,
+		'disporder' => 17,
 		'gid'		=> $groupid
 	);
 	$rinnews_setting[] = array(
@@ -206,7 +242,7 @@ function rinnews_install()
 		'description' => $lang->rinnews_myalertonoff_desc,
 		'optionscode' => 'yesno',
 		'value' => 0,
-		'disporder' => 14,
+		'disporder' => 18,
 		'gid'		=> $groupid
 	);
 
@@ -286,7 +322,7 @@ function rinnews_activate()
 	</div>
 </span>";
 
-	$new_template_global['rinnewsfootertemplate'] = "<script src=\"https://cdn.firebase.com/js/client/2.2.9/firebase.js\"></script>
+	$new_template_global['rinnewsfootertemplate'] = "<script src=\"https://www.gstatic.com/firebasejs/4.1.3/firebase.js\"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js'></script>
 <script type=\"text/javascript\">
 <!--
@@ -504,7 +540,7 @@ function sendPostDataRN($type, $data, $uid) {
 
 	global $mybb, $settings;
 
-	$emiturl = $settings['rinnews_server']."/".$type.".json?auth=".rns_token_gen(1, $uid)."";
+	$emiturl = "".trim($mybb->settings['rinnews_databaseURL'])."/".$type.".json?auth=".trim($mybb->settings['rinnews_fsecret'])."";
 	$ch = curl_init($emiturl);
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -517,17 +553,24 @@ function sendPostDataRN($type, $data, $uid) {
 function rns_token_gen($type, $uid) {
 
 	global $mybb, $settings;
-	include_once "rin/FirebaseToken.php";
+	include_once "rin/JWT.php";
 
 	$data = array(
-		"uid" => $uid,
-		"rns_news_limit" => $mybb->settings['rinnews_num_news'],
-		"url" => $mybb->settings['rinnews_server'],
-		"rest" => $type
+		"iss" => trim($mybb->settings['rinnews_client_email']),
+		"sub" => trim($mybb->settings['rinnews_client_email']),
+		"aud" => "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit",
+		"iat" => time(),
+		"exp" => time()+(60*60),  // Maximum expiration time is one hour
+		"uid" => ''.$mybb->user['uid'].'',
+		"claims" => array(
+			"uid" => $uid,
+			"rns_news_limit" => $mybb->settings['rinnews_num_news'],
+			"url" => $mybb->settings['databaseurl'],
+			"rest" => $type
+		)
 	);
 
-	$tokenGen = new Services_FirebaseTokenGenerator($mybb->settings['rinnews_fsecret']);
-	$token = $tokenGen->createToken($data);
+	$token = JWT::encode($data, str_replace('\n', "\n", trim($mybb->settings['rinnews_private_key'])), "RS256");
 	return $token;
 }
 
@@ -536,9 +579,9 @@ if ($settings['rinnews_online'] && $settings['rinnews_newthread']) {
 }
 function RNS_newthread()
 {
-	global $mybb, $tid, $settings, $lang, $forum;
+	global $mybb, $tid, $settings, $lang, $forum, $new_thread;
 
-	if(!in_array((int)$forum['fid'],explode(',',$mybb->settings['rinnews_folder_acc']))) {
+	if(!in_array((int)$forum['fid'],explode(',',$mybb->settings['rinnews_folder_acc'])) && !$new_thread['savedraft']) {
 		$lang->load('admin/config_rinnews');
 
 		if(empty($mybb->user['avatar'])) {
@@ -634,7 +677,14 @@ function rinnews_auth()
 
 	if ($mybb->input['action'] == "rinnews_gettoken"){
 		
-		$arraytoken = array('token' => rns_token_gen(0,$mybb->user['uid']), 'url' => $mybb->settings['rinnews_server']);
+		$data = array(
+			"apikey" => trim($mybb->settings['rinnews_apiKey']),
+			"authdomain" => trim($mybb->settings['rinnews_authDomain']),
+			"databaseurl" => trim($mybb->settings['rinnews_databaseURL']),
+			"rns_news_limit" => $mybb->settings['rinnews_num_news'],
+		);
+		
+		$arraytoken = array('token' => rns_token_gen(0,$mybb->user['uid']), 'data' => $data);
 		echo json_encode($arraytoken);
 	}
 }

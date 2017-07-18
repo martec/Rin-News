@@ -304,7 +304,7 @@ function rinnews_connect() {
 			IS_JSON = false;
 		}
 		if (IS_JSON) {
-			rns_connect_token(JSON.parse(result).token, JSON.parse(result).url);
+			rns_connect_token(JSON.parse(result).token, JSON.parse(result).data);
 		}
 		else {
 			if(typeof result == 'object')
@@ -317,7 +317,7 @@ function rinnews_connect() {
 							$('<div/>', { id: 'er_others', class: 'top-right' }).appendTo('body');
 						}
 						setTimeout(function() {
-							$('#er_others').jGrowl(message, { life: 1500 });
+							$('#er_others').jGrowl(message, { theme:'jgrowl_error', life: 1500 });
 						},200);
 					});
 				}
@@ -330,21 +330,36 @@ function rinnews_connect() {
 	});
 };
 
-function rns_connect_token(token, url) {
-	var ref = new Firebase(url);
-	ref.authWithCustomToken(token, function(error, authData) {
-		if (error) {
+function rns_connect_token(token, data) {
+	
+	var config = {
+		apiKey: data.apikey,
+		authDomain: data.authdomain,
+		databaseURL: data.databaseurl
+	};
+
+	firebase.initializeApp(config);
+
+	var called = false;
+
+	firebase.auth().onAuthStateChanged(function(user) {
+		// Once authenticated, instantiate Firechat with the logged in user
+		if (user && !called) {
+			if ($("#auto_log").length) { $("#auto_log .jGrowl-notification:last-child").remove(); }
+			rinnews(user, data);
+			called = true;
+		}
+	});
+
+	firebase.auth().signInWithCustomToken(token).catch(function(error) {
+		if (!called) {
 			if ($("#auto_log").length) { $("#auto_log .jGrowl-notification:last-child").remove(); }
 			if(!$('#inv_alert').length) {
 				$('<div/>', { id: 'inv_alert', class: 'top-right' }).appendTo('body');
 			}
 			setTimeout(function() {
-				$('#inv_alert').jGrowl('Invalid Token', { life: 1500 });
+				$('#inv_alert').jGrowl('Invalid Token', { theme:'jgrowl_error', life: 1500 });
 			},200);
-		}
-		else {
-			if ($("#auto_log").length) { $("#auto_log .jGrowl-notification:last-child").remove(); }
-			rinnews(authData.auth);
 		}
 	});
 }
@@ -354,7 +369,7 @@ var newscont = 0,
 rns_avt_width = rns_avt_dime_spli[0],
 rns_avt_height = rns_avt_dime_spli[1];
 
-function rinnews(authData) {
+function rinnews(authData, datatk) {
 
 	var timenews,
 	rn_set_old = '1',
@@ -364,8 +379,8 @@ function rinnews(authData) {
 	rn_set_jgrowl = '1',
 	rn_set_id = '',
 	rn_set_ls = JSON.parse(localStorage.getItem('rn_set')),
-	newnews = new Firebase(''+authData.url+'/newnews'),
-	newmyalert = new Firebase(''+authData.url+'/newmyalert');
+	newnews = firebase.database().ref('newnews'),
+	newmyalert = firebase.database().ref('newmyalert');
 
 	if (rns_zone_crrect=='1') {
 		rns_zone++;
@@ -436,7 +451,7 @@ function rinnews(authData) {
 			$('<div/>', { id: 'upd_news', class: 'bottom-right' }).appendTo('body');
 		}
 		setTimeout(function() {
-			$('#upd_news').jGrowl(''+rns_updsaved_lang+'', { life: 500 });
+			$('#upd_news').jGrowl(''+rns_updsaved_lang+'', { theme:'jgrowl_process', life: 500 });
 		},200);
 		if (rn_set_ls) {
 			rn_set_old = rn_set_ls['old'];
@@ -483,7 +498,7 @@ function rinnews(authData) {
 	});
 
 	if (parseInt(rn_set_old)) {
-		newnews.orderByKey().limitToLast(parseInt(authData.rns_news_limit)).once('value', function (snapshot) {
+		newnews.orderByKey().limitToLast(parseInt(datatk.rns_news_limit)).once('value', function (snapshot) {
 			if (snapshot.val()) {
 				var predocs = $.map(snapshot.val(), function(value, index) {
 					value._id = index;
@@ -515,7 +530,7 @@ function rinnews(authData) {
 						if(!$('#jgrowl_not').length) {
 							$('<div/>', { id: 'jgrowl_not', class: 'bottom-left' }).appendTo('body');
 						}
-						$('#jgrowl_not').jGrowl(""+rnewslang+": "+data.nick+" "+regexrinnews(data.msg)+"", { life: 1000 });
+						$('#jgrowl_not').jGrowl(""+rnewslang+": "+data.nick+" "+regexrinnews(data.msg)+"", { theme:'jgrowl_process', life: 1000 });
 					}
 					newsgenerator(data.msg, data.nick, data.avatar, data.url, data.created, data.type, 'new');
 					newscont++;
@@ -527,7 +542,7 @@ function rinnews(authData) {
 	}
 
 	if (rns_tid != '' && parseInt(rn_set_post) && $.inArray(parseInt(rns_tid), rn_set_id.split(',').map(function(idignorepost){return Number(idignorepost);}))==-1) {
-		newpostnews = new Firebase(''+authData.url+'/newpostnews/T'+rns_tid+'')
+		newpostnews = firebase.database().ref('newpostnews/T'+rns_tid+'')
 		newpostnews.orderByChild("created").startAt(Date.now()).on("child_added", function(snapshot) {
 			if(snapshot.val()) {
 				data = snapshot.val();
@@ -549,7 +564,7 @@ function rinnews(authData) {
 	}
 
 	if(parseInt(rns_myalerts)) {
-		newmyalert = new Firebase(''+authData.url+'/newmyalert/U'+authData.uid+'')
+		newmyalert = firebase.database().ref('newmyalert/U'+authData.uid+'')
 		newmyalert.orderByChild("created").startAt(Date.now()).on("child_added", function(snapshot) {
 			data = snapshot.val();
 			type = ''+data.type+'';
@@ -560,7 +575,7 @@ function rinnews(authData) {
 				if(!$('#jgrowl_not').length) {
 					$('<div/>', { id: 'jgrowl_not', class: 'bottom-left' }).appendTo('body');
 				}
-				$('#jgrowl_not').jGrowl(""+rns_new_myalerts_lang+": "+rns_new_myalertsmsg_lang+" ("+type+")", { life: 1000 });
+				$('#jgrowl_not').jGrowl(""+rns_new_myalerts_lang+": "+rns_new_myalertsmsg_lang+" ("+type+")", { theme:'jgrowl_process', life: 1000 });
 			}
 			newsmyalertsgenerator(data.created, type);
 			newscont++;
